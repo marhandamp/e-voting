@@ -36,7 +36,7 @@ class DetailKandidatActivity : AppCompatActivity() {
     private var noUrut: Int? = null
     private lateinit var visiMisi: String
     private var id by Delegates.notNull<Int>()
-    private var img: String = ""
+    private var img: Int = 0
     private var checkId = ""
     private var noTps = ""
     private val listTps = ArrayList<ModelResultTps>()
@@ -66,7 +66,8 @@ class DetailKandidatActivity : AppCompatActivity() {
         visiMisi = intent.getStringExtra(VISI_MISI)!!
         id = intent.getIntExtra("ID", 0)
         noTps = intent.getStringExtra("NO_TPS")!!
-        img = intent.getStringExtra(IMAGE)!!
+//        img = intent.getStringExtra(IMAGE)!!
+        img = intent.getIntExtra(IMAGE, 0)!!
 
         showDataKandidat()
         getHasil()
