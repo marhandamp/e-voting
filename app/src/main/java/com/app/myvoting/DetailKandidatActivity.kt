@@ -2,6 +2,7 @@ package com.app.myvoting
 
 import android.app.ProgressDialog
 import android.content.DialogInterface
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -74,54 +75,15 @@ class DetailKandidatActivity : AppCompatActivity() {
         getTps()
 
         binding.btnVote.setOnClickListener {
-            Log.d("Kode Tps", listTps.toString())
-            val view = DialogItemBinding.inflate(layoutInflater)
-
-                if (id.toString() == checkId){
-                    Toast.makeText(this, "Anda Sudah Memilih", Toast.LENGTH_SHORT).show()
-                } else {
-                    val alertDialog = AlertDialog.Builder(this@DetailKandidatActivity)
-                    alertDialog.setView(view.root)
-                    alertDialog.setTitle("Kode TPS")
-                    alertDialog.setCancelable(false)
-                    alertDialog.setPositiveButton("Vote", object : DialogInterface.OnClickListener {
-                        override fun onClick(p0: DialogInterface?, p1: Int) {
-                            val kodeTps = view.tiEdtKodeTps.text.toString().trim()
-                            var kodeBenar = ""
-                            var ab = ""
-                            for(a in listTps.indices){
-                                if (kodeTps == listTps[a].kodeTps){
-                                    kodeBenar = kodeTps
-                                    ab = listTps[a].tps
-                                }
-                            }
-
-                            if(noTps == ab){
-                                if (kodeBenar == kodeTps){
-
-                                    postPemilihan()
-
-                                    Handler().postDelayed({
-                                        onBackPressed()
-                                    }, 1000)
-
-//                                Toast.makeText(this@DetailKandidatActivity, "$kodeBenar $kodeTps", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    Toast.makeText(this@DetailKandidatActivity, "Kode Tps Salah", Toast.LENGTH_SHORT).show()
-                                }
-                            } else {
-                                Toast.makeText(this@DetailKandidatActivity, "Anda Terdaftar Pada Tps $noTps", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    })
-                    alertDialog.setNegativeButton("Keluar", object : DialogInterface.OnClickListener {
-                        override fun onClick(p0: DialogInterface, p1: Int) {
-                            p0.dismiss()
-                        }
-                    })
-                    alertDialog.create()
-                    alertDialog.show()
+            if (id.toString() == checkId){
+                Toast.makeText(this, "Anda Sudah Memilih", Toast.LENGTH_SHORT).show()
+                Intent(this@DetailKandidatActivity, ScanNfcActivity::class.java).also {
+                    it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(it)
                 }
+            } else {
+                postPemilihan()
+            }
         }
     }
 
@@ -139,12 +101,22 @@ class DetailKandidatActivity : AppCompatActivity() {
         uR.kandidat_id = kandidatId.toString()
         uR.pemilih_id = id.toString()
 
-        RetrofitClient.instance.postPemilihan(uR
-        ).enqueue(object : Callback<UserResponse> {
+        RetrofitClient.instance.postPemilihan(uR).enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                val progressDialog = ProgressDialog(this@DetailKandidatActivity)
+                progressDialog.setMessage("Mohon Menunggu..")
+                progressDialog.setCancelable(false)
+                progressDialog.create()
+                progressDialog.show()
                 if (response.isSuccessful){
-                    Snackbar.make(binding.root, "Voting Berhasil", Snackbar.LENGTH_SHORT).show()
+                    progressDialog.dismiss()
+                    Intent(this@DetailKandidatActivity, ScanNfcActivity::class.java).also {
+                        it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(it)
+                    }
+                    Toast.makeText(this@DetailKandidatActivity, "Anda Memilih Kandidat $namaKandidat", Toast.LENGTH_SHORT).show()
                 } else {
+                    progressDialog.dismiss()
                     Snackbar.make(binding.root, "Anda Yang Tidak Beres", Snackbar.LENGTH_SHORT).show()
                 }
             }

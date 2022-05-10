@@ -1,6 +1,8 @@
 package com.app.myvoting
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.myvoting.retrofit.RetrofitClient
 import com.app.myvoting.adapter.KandidatAdapter
 import com.app.myvoting.databinding.ActivityKandidatBinding
+import com.app.myvoting.databinding.DialogItemBinding
 import com.app.myvoting.retrofit.response.kandidat.ModelResult
 import com.app.myvoting.retrofit.response.kandidat.ModelResultData
 import retrofit2.Call
@@ -37,6 +40,7 @@ class KandidatActivity : AppCompatActivity() {
         id = intent.getIntExtra("ID", 0)
         noTps = intent.getStringExtra("NO_TPS").toString()
         getKandidat(id, noTps)
+        dialog()
 
     }
 
@@ -74,6 +78,19 @@ class KandidatActivity : AppCompatActivity() {
                 Toast.makeText(this@KandidatActivity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun dialog(){
+        val alertDialog = AlertDialog.Builder(this@KandidatActivity)
+        alertDialog.setMessage("Anda Terdaftar Pada TPS $noTps")
+        alertDialog.setCancelable(false)
+        alertDialog.setPositiveButton("Ok", object : DialogInterface.OnClickListener {
+            override fun onClick(p0: DialogInterface?, p1: Int) {
+                p0?.dismiss()
+            }
+        })
+        alertDialog.create()
+        alertDialog.show()
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -1,6 +1,5 @@
 package com.app.myvoting.retrofit
 
-import com.annisa.evoteing.retrofit.Api
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

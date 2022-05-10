@@ -1,4 +1,4 @@
-package com.annisa.evoteing.retrofit
+package com.app.myvoting.retrofit
 
 import com.app.myvoting.retrofit.response.hasil.ModelResultHasilData
 import com.app.myvoting.retrofit.response.kandidat.ModelResultData
